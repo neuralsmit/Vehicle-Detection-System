@@ -22,12 +22,12 @@ A computer vision pipeline using **YOLOv8**, **OpenCV**, and **ByteTrack** for r
 Vehicle-Detection-System/
 ├── input_videos/                   # Source videos (untouched)
 │   ├── traffic1.mp4                # 4K Overpass bridge view
-│   ├── traffic2.mp4                # 4K Roadside street view
-│   └── traffic3.mp4                # 4K Aerial overhead road view
+│   └── traffic2.mp4                # 4K Roadside street view
+├── sample_videos/                  # Compact demo video for cloud deployment
+│   └── demo_sample.mp4
 ├── outputs/                        # Annotated processed videos
 │   ├── traffic1_counted.mp4
-│   ├── traffic2_counted.mp4
-│   └── traffic3_counted.mp4
+│   └── traffic2_counted.mp4
 ├── results/                        # Reports and statistics
 │   ├── traffic_comparison_report.csv
 │   └── traffic_summary.json
@@ -78,10 +78,9 @@ streamlit run app.py
 
 ## Batch Benchmark Results
 
-Summary from processing `traffic1.mp4`, `traffic2.mp4`, and `traffic3.mp4`:
+Summary from processing `traffic1.mp4` and `traffic2.mp4`:
 
 | Video | Raw Resolution | Processed Resolution | Frames | Duration | Processing FPS | Total Counted | Cars | Motorcycles | Buses | Trucks | Status |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **traffic1.mp4** | 2160x3840 (4K) | 720x1280 (HD) | 553 | 18.6s | 6.32 | **16** | 14 | 0 | 1 | 1 | Success |
-| **traffic2.mp4** | 3840x2160 (4K) | 1280x720 (HD) | 280 | 9.3s | 6.44 | **6** | 5 | 0 | 0 | 1 | Success |
-| **traffic3.mp4** | 2160x3840 (4K) | 720x1280 (HD) | 642 | 10.7s | 7.57 | **0** | 0 | 0 | 0 | 0 | Success |
+| **traffic1.mp4** | 2160x3840 (4K) | 720x1280 (HD) | 553 | 18.6s | 5.2 | **16** | 14 | 0 | 1 | 1 | Success |
+| **traffic2.mp4** | 3840x2160 (4K) | 1280x720 (HD) | 280 | 9.3s | 6.2 | **6** | 5 | 0 | 0 | 1 | Success |

@@ -24,7 +24,7 @@ from vehicle_counter import process_video
 
 # Default per-video counting line setups tailored to camera geometry
 VIDEO_LINE_CONFIGS: Dict[str, Any] = {
-    # New Traffic Videos
+    # Traffic Benchmark Videos
     "traffic1.mp4": {
         "orientation": "horizontal",
         "pos": 0.55,
@@ -33,11 +33,10 @@ VIDEO_LINE_CONFIGS: Dict[str, Any] = {
         "orientation": "horizontal",
         "pos": 0.65,
     },
-    "traffic3.mp4": {
-        "orientation": "vertical",
-        "pos": 0.50,
+    "demo_sample.mp4": {
+        "orientation": "horizontal",
+        "pos": 0.65,
     },
-    
 }
 
 DEFAULT_LINE_CONFIG = {"orientation": "horizontal", "pos": 0.50}

@@ -102,15 +102,28 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+import shutil
+
 INPUTS_DIR = "input_videos"
 OUTPUTS_DIR = "outputs"
 RESULTS_DIR = "results"
+SAMPLE_DIR = "sample_videos"
 RESULTS_CSV = os.path.join(RESULTS_DIR, "traffic_comparison_report.csv")
 RESULTS_JSON = os.path.join(RESULTS_DIR, "traffic_summary.json")
 
 os.makedirs(INPUTS_DIR, exist_ok=True)
 os.makedirs(OUTPUTS_DIR, exist_ok=True)
 os.makedirs(RESULTS_DIR, exist_ok=True)
+os.makedirs(SAMPLE_DIR, exist_ok=True)
+
+# Ensure sample demo video is available in input_videos for cloud deployments
+sample_src = os.path.join(SAMPLE_DIR, "demo_sample.mp4")
+sample_dst = os.path.join(INPUTS_DIR, "demo_sample.mp4")
+if os.path.exists(sample_src) and not os.path.exists(sample_dst):
+    try:
+        shutil.copy(sample_src, sample_dst)
+    except Exception:
+        pass
 
 # -------------------------------------------------------------
 # SIDEBAR
@@ -174,7 +187,7 @@ if nav_selection == "📊 Analytics & Reports":
                 <div class='metric-card'>
                     <div class='metric-title'>Videos Benchmarked</div>
                     <div class='metric-value'>{total_vids}</div>
-                    <div class='metric-subtitle'>All 3 streams processed</div>
+                    <div class='metric-subtitle'>{total_vids} benchmark feeds</div>
                 </div>
                 """,
                 unsafe_allow_html=True,
@@ -298,13 +311,44 @@ elif nav_selection == "🎬 Interactive Analyzer":
     st.markdown("## 🎬 Interactive Video Analyzer")
     st.markdown("Configure detection parameters, preview counting lines, and run real-time inference on any video.")
 
-    input_files = [f for f in os.listdir(INPUTS_DIR) if f.lower().endswith((".mp4", ".avi", ".mov", ".mkv"))]
+    input_files = sorted([f for f in os.listdir(INPUTS_DIR) if f.lower().endswith((".mp4", ".avi", ".mov", ".mkv"))])
 
     col_left, col_right = st.columns([1, 1])
 
     with col_left:
         st.markdown("#### 1. Video & Model Selection")
-        selected_file = st.selectbox("Select Traffic Video:", input_files) if input_files else None
+
+        video_source_mode = st.radio(
+            "Video Source:",
+            ["📁 Preloaded / Server Videos", "📤 Upload Custom Video (.mp4)"],
+            horizontal=True,
+        )
+
+        selected_video_path = None
+        selected_file_name = None
+
+        if video_source_mode == "📁 Preloaded / Server Videos":
+            if input_files:
+                selected_name_pre = st.selectbox("Select Traffic Video:", input_files)
+                selected_video_path = os.path.join(INPUTS_DIR, selected_name_pre)
+                selected_file_name = selected_name_pre
+            else:
+                st.warning("No preloaded videos found. Please switch to 'Upload Custom Video' to test any video.")
+        else:
+            uploaded_file = st.file_uploader(
+                "Upload a traffic video file (.mp4, .avi, .mov, .mkv):",
+                type=["mp4", "avi", "mov", "mkv"],
+            )
+            if uploaded_file is not None:
+                upload_name = f"upload_{uploaded_file.name}"
+                upload_path = os.path.join(INPUTS_DIR, upload_name)
+                with open(upload_path, "wb") as f_out:
+                    f_out.write(uploaded_file.getbuffer())
+                selected_video_path = upload_path
+                selected_file_name = uploaded_file.name
+                st.success(f"✅ Loaded: `{uploaded_file.name}` ({len(uploaded_file.getbuffer()) / (1024*1024):.1f} MB)")
+            else:
+                st.info("👆 Please upload a video above to preview and analyze.")
 
         col_m1, col_m2 = st.columns(2)
         with col_m1:
@@ -317,7 +361,7 @@ elif nav_selection == "🎬 Interactive Analyzer":
         with col_line1:
             line_orientation = st.radio("Orientation:", ["Horizontal", "Vertical"], horizontal=True)
         with col_line2:
-            default_pos = VIDEO_LINE_CONFIGS.get(selected_file, {}).get("pos", 0.55) if selected_file else 0.55
+            default_pos = VIDEO_LINE_CONFIGS.get(selected_file_name, {}).get("pos", 0.55) if selected_file_name else 0.55
             line_pos = st.slider("Line Position Ratio:", min_value=0.10, max_value=0.90, value=float(default_pos), step=0.05)
 
         # Dimension scaling options
@@ -326,15 +370,13 @@ elif nav_selection == "🎬 Interactive Analyzer":
 
     with col_right:
         st.markdown("#### 3. Live Counting Line Preview")
-        if selected_file:
-            input_path = os.path.join(INPUTS_DIR, selected_file)
-            cap_preview = cv2.VideoCapture(input_path)
+        if selected_video_path and os.path.exists(selected_video_path):
+            cap_preview = cv2.VideoCapture(selected_video_path)
             ret, prev_frame = cap_preview.read()
             cap_preview.release()
 
             if ret:
                 h_p, w_p = prev_frame.shape[:2]
-                # Scale preview frame for display
                 disp_w = 640
                 disp_h = int(h_p * (disp_w / w_p))
                 prev_resized = cv2.resize(prev_frame, (disp_w, disp_h))
@@ -350,15 +392,26 @@ elif nav_selection == "🎬 Interactive Analyzer":
                     cv2.putText(prev_resized, f"COUNTING LINE (x={x_line})", (max(x_line - 100, 15), 30), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 255), 2)
 
                 prev_rgb = cv2.cvtColor(prev_resized, cv2.COLOR_BGR2RGB)
-                st.image(prev_rgb, caption=f"Frame 0 with Counting Line ({selected_file})", use_container_width=True)
+                st.image(prev_rgb, caption=f"Frame 0 with Counting Line ({selected_file_name})", use_container_width=True)
             else:
                 st.error("Failed to read video frame for preview.")
+        else:
+            st.markdown(
+                """
+                <div style='background: rgba(30, 41, 59, 0.5); border: 2px dashed rgba(255,255,255,0.15); border-radius: 12px; padding: 40px 20px; text-align: center; color: #94a3b8;'>
+                    <p style='font-size: 2.2rem; margin: 0;'>🎥</p>
+                    <p style='font-weight: 600; font-size: 1rem; margin: 10px 0 5px 0;'>No Video Selected</p>
+                    <p style='font-size: 0.85rem; margin: 0;'>Select a preloaded video or upload your own file on the left to preview the counting line.</p>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
 
     st.markdown("---")
-    if st.button("🚀 Run Vehicle Detection & Counting", type="primary", use_container_width=True):
-        if selected_file:
-            in_path = os.path.join(INPUTS_DIR, selected_file)
-            out_base = f"interactive_{os.path.splitext(selected_file)[0]}_counted.mp4"
+    can_run = selected_video_path is not None and os.path.exists(selected_video_path)
+    if st.button("🚀 Run Vehicle Detection & Counting", type="primary", use_container_width=True, disabled=not can_run):
+        if selected_video_path:
+            out_base = f"interactive_{os.path.splitext(os.path.basename(selected_video_path))[0]}_counted.mp4"
             out_path = os.path.join(OUTPUTS_DIR, out_base)
 
             p_bar = st.progress(0)
@@ -379,7 +432,7 @@ elif nav_selection == "🎬 Interactive Analyzer":
             with st.spinner("Processing video with YOLOv8 + ByteTrack..."):
                 t0 = time.time()
                 stats = process_video(
-                    source=in_path,
+                    source=selected_video_path,
                     output_path=out_path,
                     model_path=model_choice,
                     line_config=line_config,
@@ -407,8 +460,6 @@ elif nav_selection == "🎬 Interactive Analyzer":
                     file_name=out_base,
                     mime="video/mp4",
                 )
-        else:
-            st.error("Please select a video file first.")
 
 # -------------------------------------------------------------
 # PAGE 3: SIDE-BY-SIDE COMPARATOR

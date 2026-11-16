@@ -22,6 +22,8 @@ input_videos/*
 outputs/*
 !input_videos/.gitkeep
 !outputs/.gitkeep
+!sample_videos/
+!sample_videos/demo_sample.mp4
 
 # IDE and System files
 .idea/

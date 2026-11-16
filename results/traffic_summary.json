@@ -7,8 +7,8 @@
     "resolution": "720x1280",
     "total_frames": 553,
     "video_duration_sec": 18.55,
-    "processing_time_sec": 106.87,
-    "avg_fps": 5.17,
+    "processing_time_sec": 120.35,
+    "avg_fps": 4.59,
     "total_vehicles": 16,
     "counts": {
       "Cars": 14,
@@ -28,8 +28,8 @@
     "resolution": "1280x720",
     "total_frames": 280,
     "video_duration_sec": 9.34,
-    "processing_time_sec": 45.09,
-    "avg_fps": 6.21,
+    "processing_time_sec": 44.14,
+    "avg_fps": 6.34,
     "total_vehicles": 6,
     "counts": {
       "Cars": 5,
@@ -39,27 +39,6 @@
     },
     "dir_a_count": 3,
     "dir_b_count": 3,
-    "status": "Success"
-  },
-  {
-    "video": "traffic3.mp4",
-    "source_path": "input_videos\\traffic3.mp4",
-    "output_path": "outputs\\traffic3_counted.mp4",
-    "raw_resolution": "2160x3840",
-    "resolution": "720x1280",
-    "total_frames": 642,
-    "video_duration_sec": 10.71,
-    "processing_time_sec": 84.31,
-    "avg_fps": 7.61,
-    "total_vehicles": 0,
-    "counts": {
-      "Cars": 0,
-      "Motorcycles": 0,
-      "Buses": 0,
-      "Trucks": 0
-    },
-    "dir_a_count": 0,
-    "dir_b_count": 0,
     "status": "Success"
   }
 ]

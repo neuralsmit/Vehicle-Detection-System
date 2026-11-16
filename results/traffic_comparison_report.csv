@@ -1,4 +1,4 @@
 Video,Status,Raw_Resolution,Processed_Resolution,Total_Frames,Video_Duration_Sec,Processing_Time_Sec,Avg_FPS,Total_Vehicles,Cars,Motorcycles,Buses,Trucks,Output_File
 traffic1.mp4,Success,2160x3840,720x1280,553,18.55,106.87,5.17,16,14,0,1,1,traffic1_counted.mp4
 traffic2.mp4,Success,3840x2160,1280x720,280,9.34,45.09,6.21,6,5,0,0,1,traffic2_counted.mp4
-traffic3.mp4,Success,2160x3840,720x1280,642,10.71,84.31,7.61,0,0,0,0,0,traffic3_counted.mp4
+
