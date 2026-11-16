@@ -34,24 +34,10 @@ VIDEO_LINE_CONFIGS: Dict[str, Any] = {
         "pos": 0.65,
     },
     "traffic3.mp4": {
-        "orientation": "horizontal",
-        "pos": 0.50,
-    },
-    # Previous Highway Videos
-    "highway1.mp4": {
         "orientation": "vertical",
-        "pos": 0.86,
-        "ymin": 100,
-        "ymax": 500,
-    },
-    "highway2.mp4": {
-        "orientation": "horizontal",
-        "pos": 0.20,
-    },
-    "topview.mp4": {
-        "orientation": "horizontal",
         "pos": 0.50,
     },
+    
 }
 
 DEFAULT_LINE_CONFIG = {"orientation": "horizontal", "pos": 0.50}
