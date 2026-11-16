@@ -1,0 +1,31 @@
+# Byte-compiled / Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environments
+.venv/
+venv/
+ENV/
+env/
+
+# Large Model Weights (YOLO weights are auto-downloaded on first run)
+*.pt
+
+# Video files (exceed GitHub's 100MB file limit)
+*.mp4
+*.avi
+*.mov
+*.mkv
+input_videos/*
+outputs/*
+!input_videos/.gitkeep
+!outputs/.gitkeep
+
+# IDE and System files
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
