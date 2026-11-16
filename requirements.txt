@@ -3,3 +3,4 @@ opencv-python>=4.8.0
 lapx>=0.5.5
 streamlit>=1.30.0
 pandas>=2.0.0
+plotly>=5.18.0
